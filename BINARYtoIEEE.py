@@ -9,7 +9,6 @@ def exponent(e, bias):
     # convert e to decimal number
     convertExponent = int(e, 2)
     # subtract bias
-    print("e", convertExponent)
     return convertExponent - int(bias)
 
 def mantissa(m, mantissaLength):
@@ -17,7 +16,6 @@ def mantissa(m, mantissaLength):
     m = '0.'+m
     for i in range(1,int(mantissaLength)):
         result += int(m[2+i])*(2**(-i))
-    print(result)
     return result
 
 def main():
@@ -26,7 +24,7 @@ def main():
     # convert to hex if needed
     hex = input("y for Hex, n for binary: ")
     if (hex == 'y'):
-        width = input("Input width of number: ")
+        width = input("Input width of number (32 by default): ")
         num = hexConvert(num, width)
 
     # get the sign
