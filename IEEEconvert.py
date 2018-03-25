@@ -4,7 +4,7 @@ def sign(num):
     else:
         return 0
 
-def convert(num, mantissa):
+def convert(num, mantissa,e):
     # check if there is a decimal, if so, split it into two parts
     intPart = num
     decimal = 0
@@ -12,27 +12,35 @@ def convert(num, mantissa):
     if '.' in num:
         intPart = int(num[:num.find('.')])
         decimal = float(num[num.find('.'):])
-    # convert the integer part into binary
-    convertInt = str("{0:b}".format(int(intPart)))
+    # convert the integer part into binary, or use the exponent (if it has no integer part)
+    convertInt = "0"
+    if intPart != 0:
+        convertInt = str("{0:b}".format(int(intPart)))
     # convert the decimal part (if there is one)
     if decimal != 0:
         numAfterOne = 0
         # find the first 1 (if there is an integer part)
         if intPart != 0:
             numAfterOne = len(convertInt)-(convertInt.find('1')+1)
+        elif intPart == 0:
+            numAfterOne = -e
         # is the numAfterOne == mantissa
         if (numAfterOne > mantissa) or (numAfterOne == mantissa):
             return convertInt[convertInt.find('1')+1:convertInt.find('1')+1+mantissa]
         while numAfterOne < mantissa:
             tempDecimal = decimal * 2
-            if tempDecimal > 1:
+            print(decimal, tempDecimal)
+            if (tempDecimal > 1) or (tempDecimal == 1):
                 convertInt += "1"
                 decimal = tempDecimal - 1
             else:
                 decimal = tempDecimal
                 convertInt += "0"
             numAfterOne+=1
-    return convertInt[convertInt.find('1')+1:convertInt.find('1')+1+mantissa]
+    if intPart !=0:
+        return convertInt[convertInt.find('1')+1:int(convertInt.find('1')+1+(mantissa))]
+    else:
+        return convertInt[convertInt.find('1')+1:int(convertInt.find('1')+1+(mantissa)+int(e))]
 
 def exponent(num, bias, exponentSize):
     exponent = 0
@@ -68,7 +76,7 @@ def exponent(num, bias, exponentSize):
     elif len(str(convertExponent)) < int(exponentSize):
         numZeroes = int(exponentSize) - (len(str(convertExponent)))
         convertExponent = numZeroes*"0"+convertExponent
-    return convertExponent
+    return (-(exponent-int(bias))),convertExponent
 
 def main():
     # get the number from the user
@@ -85,20 +93,25 @@ def main():
 
     # determine the sign (s)
     s = sign(num)
+    # find the exponent
+    expon = 0
+    e = 0
+    if s == 0:
+        expon, e = exponent(num, bias, exponentSize)
+    elif s == 1:
+        expon, e = exponent(num[1:], bias, exponentSize)
     # convert the number to obtain mantissa
     m = 0
     if s == 0:
-        m = convert(num, mantissa)
+        m = convert(num, mantissa, expon)
     elif s == 1:
-        m = convert(num[1:], mantissa)
-    # find the exponent
-    e = exponent(num, bias, exponentSize)
+        m = convert(num[1:], mantissa,expon)
 
     # put it all together
     binary = str(s)+e+m
     print(binary)
 
-    compareNum = input("Enter the number to compare to: ")
+    compareNum = input("Enter the number to compare to:")
     if(compareNum == binary):
         print("They match!")
     else:
