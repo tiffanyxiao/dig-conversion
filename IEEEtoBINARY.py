@@ -29,7 +29,6 @@ def convert(num, mantissa,e):
             return convertInt[convertInt.find('1')+1:convertInt.find('1')+1+mantissa]
         while numAfterOne < mantissa:
             tempDecimal = decimal * 2
-            print(decimal, tempDecimal)
             if (tempDecimal > 1) or (tempDecimal == 1):
                 convertInt += "1"
                 decimal = tempDecimal - 1
